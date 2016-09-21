@@ -1,0 +1,10 @@
+/.gradle/
+/build/
+/classes/
+/*.iml
+/*.iws
+/*.ipr
+/.idea/
+/.nb-gradle-properties
+/.nb-gradle/
+/src/main/resources/app.gwt.xml
