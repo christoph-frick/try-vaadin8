@@ -1,0 +1,31 @@
+# production defaults
+# see the `dev` profile below for development
+
+app:
+  vaadin:
+    productionMode: "true" # must be string!
+
+server:
+  address: 127.0.0.1
+
+vaadin:
+  servlet:
+    # urlMapping: /app/*
+    productionMode: "${app.vaadin.productionMode}"
+
+spring:
+  groovy:
+    template:
+      check-template-location: false
+  main:
+    banner-mode: "off"
+
+---
+
+spring:
+    profiles: dev
+
+app:
+  vaadin:
+    productionMode: "false" # must be string
+

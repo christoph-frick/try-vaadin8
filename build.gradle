@@ -1,0 +1,79 @@
+buildscript {
+    ext {
+        gradleVaadinPluginVersion = '1.0'
+        springBootVersion = '1.4.4.RELEASE'
+    }
+    repositories.jcenter()
+    dependencies {
+        classpath "fi.jasoft.plugin:gradle-vaadin-plugin:$gradleVaadinPluginVersion"
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
+    }
+}
+
+ext {
+    ext {
+        groovyVersion = '2.4.8'
+        gradleWrapperVersion = '3.3'
+        vaadinVersion = '8.0.0.rc1'
+        vaadinSpringVersion = '2.0-SNAPSHOT'
+    }
+}
+
+apply plugin: 'idea'
+apply from: 'gradle/idea.gradle'
+apply plugin: 'groovy'
+apply plugin: 'application'
+apply plugin: 'fi.jasoft.plugin.vaadin'
+apply plugin: 'org.springframework.boot'
+apply from: 'gradle/springboot-vaadin-fixes.gradle'
+
+repositories {
+    jcenter()
+    maven { url 'http://maven.vaadin.com/vaadin-addons' }
+    maven { url 'http://oss.sonatype.org/content/repositories/vaadin-snapshots' }
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+compileGroovy {
+	groovyOptions.configurationScript = file("gradle/groovyOptions.groovy")
+}
+
+mainClassName = "app.Application"
+
+jar {
+    baseName = 'app'
+    // version = '0.1.0'
+    manifest {
+        attributes 'Main-Class': mainClassName
+    }
+}
+
+vaadin {
+	vaadin.version = vaadinVersion
+	vaadinCompile.widgetset jar.baseName
+    vaadinCompile.userAgent "ie8,ie9,gecko1_8,safari"
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = gradleWrapperVersion
+}
+
+dependencies {
+    compile "org.codehaus.groovy:groovy-all:${groovyVersion}"
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile 'org.springframework.boot:spring-boot-devtools'
+    compile("com.vaadin:vaadin-spring-boot-starter:${vaadinSpringVersion}") {
+    }
+}
+
+// Exclude all deps, that pull in newer versions of the critical libraries for
+// widgetset compilation here (e.g. validation-api).  If there are errors
+// building the widgetset, check with `./gradlew dependencies` first.
+configurations {
+	'vaadin-client' {
+		exclude module: 'spring-boot-starter-web'
+		exclude module: 'spring-boot-vaadin'
+	}
+}
