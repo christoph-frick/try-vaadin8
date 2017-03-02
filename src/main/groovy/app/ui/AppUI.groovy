@@ -79,8 +79,11 @@ class AppUI extends UI {
 
         // lesson learned: calls must be chained
         // withConverter returns a new/wrapped object -- using groovy's `with` will throw it away and the converter is not in place
+        // lesson learned: if the value can be null, then setting a null representation is required (before the converter); required alone is not enough
         binder.forField(priceField).
                 withStatusLabel(priceStatusLabel).
+                asRequired("Must have a value").
+                withNullRepresentation('').
                 withConverter(new StringToBigDecimalConverter("Please enter a number")).
                 bind 'price'
 
@@ -105,7 +108,7 @@ class AppUI extends UI {
                                                         [
                                                                 new Item(1L, "Foo", 42.0G, LocalDateTime.now(), new Duration(10.0d, DurationUnit.MINUTES), new GeoPoint(-200.0G,-100.0G)),
                                                                 new Item(2L, "Bar", 23.0G, LocalDateTime.now(), new Duration(2.0d, DurationUnit.HOURS), new GeoPoint(0.0G,0.0G)),
-                                                                new Item(3L, "Baz", 666.0G, LocalDateTime.now(), new Duration(3.0d, DurationUnit.DAYS), new GeoPoint(0.0G,0.0G)),
+                                                                new Item(3L, "Baz", null, LocalDateTime.now(), new Duration(3.0d, DurationUnit.DAYS), new GeoPoint(0.0G,0.0G)),
                                                         ].stream()
                                                     } as CallbackDataProvider.FetchCallback,
                                                     { query -> 3 } as CallbackDataProvider.CountCallback,
